@@ -1,10 +1,12 @@
+#!/usr/bin/python
+
 import subprocess
 import plistlib
 
-factoid = 'drive_medium'
+factoid = 'drive_capacity'
 
 def fact():
-    '''Returns the boot drive medium'''
+    '''Returns the boot drive capacity'''
     result = 'None'
 
     try:
@@ -19,12 +21,7 @@ def fact():
 
     if stdout:
         d = plistlib.readPlistFromString(stdout.strip())
-        if d.get('CoreStorageCompositeDisk', False):
-            result = 'fusion'
-        elif d.get('RAIDMaster', False):
-            result = 'raid'
-        else:
-            result = 'ssd' if d.get('SolidState', False) else 'rotational'
+        result = round(float(d['TotalSize']) / 10**9, 2)
 
     return {factoid: result}
 
